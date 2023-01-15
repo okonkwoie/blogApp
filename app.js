@@ -2,14 +2,14 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const config = require('./config/config')
 const mongodbConnect = require('./db/mongodb')
-const auth0Middleware = require('./auth/auth0')
+// const auth0Middleware = require('./auth/auth0')
 
 const app = express()
 
 // middlewares
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
-app.use(auth0Middleware)
+// app.use(auth0Middleware)
 
 // mongodb connection 
 mongodbConnect
