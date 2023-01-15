@@ -10,12 +10,9 @@ const userSchema = Joi.object({
             .max(200)
             .required(),
     email: Joi.string()
-            .alphanum()
             .required()
-            .unique()
-            .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
+            .unique(),
     password: Joi.string()
-            .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
             .required()
 })
 

@@ -24,8 +24,13 @@ const userSchema = new Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+
+    timestamp: {
+        type: Date,
+        default: Date.now()
+   },
 })
 
-module.exports = mongoose.Schema('user', userSchema)
+module.exports = mongoose.model('user', userSchema)
 
