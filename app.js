@@ -3,6 +3,9 @@ const bodyParser = require('body-parser')
 const config = require('./config/config')
 const mongodbConnect = require('./db/mongodb')
 const userRouter = require('./routes/userRoutes')
+const blogRouter = require('./routes/blogRoutes')
+
+
 // const auth0Middleware = require('./auth/auth0')
 
 const app = express()
@@ -14,6 +17,7 @@ app.use(bodyParser.json())
 
 // for routers
 app.use('/api/v1/users', userRouter)
+app.use('/api/v1/blogs', blogRouter)
 
 // mongodb connection 
 mongodbConnect
