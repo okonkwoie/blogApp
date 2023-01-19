@@ -15,7 +15,7 @@ const blogSchema = Joi.object({
               .items(Joi.string()),
     timestamp: Joi.date(),
     readCount: Joi.number(),
-    readingTime: Joi.number(),
+    readingTime: Joi.string(),
     state: Joi.string()
 })
 

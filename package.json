@@ -4,7 +4,8 @@
   "description": "A simple blogging application",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -28,5 +29,8 @@
     "joi": "^17.7.0",
     "mongoose": "^6.8.3",
     "nodemon": "^2.0.20"
+  },
+  "devDependencies": {
+    "jest": "^29.3.1"
   }
 }

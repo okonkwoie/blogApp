@@ -6,8 +6,6 @@ const userRouter = require('./routes/userRoutes')
 const blogRouter = require('./routes/blogRoutes')
 const helmet = require('helmet')
 const rateLimit = require('express-rate-limit')
-
-
 // const auth0Middleware = require('./auth/auth0')
 
 const app = express()
@@ -33,7 +31,7 @@ const limiter = rateLimit({
 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
-// Apply the rate limiting middleware to all requests
+// rate limiting middleware to all requests
 app.use(limiter)
 
 // error handler middleware
