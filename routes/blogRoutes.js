@@ -7,11 +7,30 @@ const blogRouter = express.Router()
 
 // get all blogs
 blogRouter.get('/', (req, res) => {
+   let search = req.query.search
+   if(!search){
+    search = {}
+   } else {
+    search = { $or: [
+        { author: {$regex: search, $options: 'i'} },
+        { title: {$regex: search, $options: 'i'} },
+        { tags: {$regex: search, $options: 'i'} }
+    ]}
+   }
+
+  //sorting the search
+   let sort = req.query.sort
+   if(!sort){
+    sort = {}
+   } else {
+    sort = { [sort]: -1 }
+   }
+   
    const page = req.query.page || 1
-   const pageLimit = 4
+   const pageLimit = req.query.pageLimit || 20
    const skip = ((page - 1) * pageLimit)
 
-    blogModel.find()
+    blogModel.find(search)
     .skip(skip)
     .limit(pageLimit)
     .then((blogs) => {
