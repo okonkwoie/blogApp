@@ -5,19 +5,29 @@ const mongodbConnect = require('./db/mongodb')
 const userRouter = require('./routes/userRoutes')
 const blogRouter = require('./routes/blogRoutes')
 const helmet = require('helmet')
-const rateLimit = require('express-rate-limit')
-// const auth0Middleware = require('./auth/auth0')
+const rateLimiter = require('./ratelimiting/rate_limiter')
+const logger = require('./logging/logger')
+const auth0Middleware = require('./auth/auth0')
+const { requiresAuth } = require('express-openid-connect')
 
 const app = express()
 
 // middlewares
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
-// app.use(auth0Middleware)
+app.use(auth0Middleware)
+// app.use(jwtCheck)
 
-// for routers
+// accessible routes
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/blogs', blogRouter)
+
+// protected routes
+app.use('/api/v1/blogs/createBlog', requiresAuth(), blogRouter)
+app.use('/api/v1/blogs/updateBlogState/:id', requiresAuth(), blogRouter)
+app.use('/api/v1/blogs/updateByID/:id', requiresAuth(), blogRouter)
+app.use('/api/v1/blogs/deleteByID/:id', requiresAuth(), blogRouter)
+app.use('/api/v1/blogs/ownersBlogs/:state', requiresAuth(), blogRouter)
 
 // mongodb connection 
 mongodbConnect
@@ -25,34 +35,30 @@ mongodbConnect
 // security middleware
 app.use(helmet())
 
-const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000, // 15 minutes
-	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-})
 // rate limiting middleware to all requests
-app.use(limiter)
+app.use(rateLimiter)
 
 // error handler middleware
 app.use((err, req, res, next) => {
-    res.send(err.message)
+    logger.error(err.message)
+    res.status(500).send({
+        error: 'An unexpected error occurred'
+    })
     next()
 })
 
 
-
-
-
-
-
+// home route
 app.get('/', (req, res) => {
-    res.send('welcome to my blog app!')
+    res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
 })
+
+
+
 
 
 
 
 app.listen(config.PORT, () => {
-    console.log(`server is listening on port: ${config.PORT} `);
+    logger.info(`server is listening on port: ${config.PORT} `);
 })

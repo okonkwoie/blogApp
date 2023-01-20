@@ -1,159 +1,32 @@
 const express = require('express')
-const blog = require('../models/blog')
 const blogModel = require('../models/blog')
 const readingTime = require('../readtime/readingTime')
+const bookController = require('../controller/blog_controller')
 
 const blogRouter = express.Router()
 
+
 // get all blogs
-blogRouter.get('/', (req, res) => {
-   let search = req.query.search
-   if(!search){
-    search = {}
-   } else {
-    search = { $or: [
-        { author: {$regex: search, $options: 'i'} },
-        { title: {$regex: search, $options: 'i'} },
-        { tags: {$regex: search, $options: 'i'} }
-    ]}
-   }
-
-  //sorting the search
-   let sort = req.query.sort
-   if(!sort){
-    sort = {}
-   } else {
-    sort = { [sort]: -1 }
-   }
-   
-   const page = req.query.page || 1
-   const pageLimit = req.query.pageLimit || 20
-   const skip = ((page - 1) * pageLimit)
-
-    blogModel.find(search)
-    .skip(skip)
-    .limit(pageLimit)
-    .then((blogs) => {
-        blogModel.countDocuments({})
-        .then((count) => {
-           res.send({
-            data: blogs,
-            meta: {
-                currentPage: page,
-                pageLimit: pageLimit,
-                total_result: count
-            }
-          })
-        })
-    })
-    .catch(error => {
-        res.send({
-            message: 'blogs not found'
-        })
-        console.log(error)
-    })
-})
+blogRouter.get('/getAllBlogs', bookController.getAllBlogs)
 
 // get a blog by ID
-blogRouter.get('/:id', (req, res) => {
-    const blogID = req.params.id
-
-    blogModel.findByIdAndUpdate(blogID, { $inc: { read_count: 1 } },  { new: true })
-    .then(() => {
-        blogModel.findById(blogID)
-          .then((blog) => {
-          blog.reading_time = readingTime(blog.body)
-          res.status(200).send(blog)
-        })
-          .catch((error) => {
-            res.status(404).send({
-                message: 'Blog not found'
-            })
-            console.log(error)
-        })
-    })
-})
+blogRouter.get('/getBlogByID/:id', bookController.getBlogByID)
 
 // create a blog
-blogRouter.post('/', (req, res) => {
-    const blog = req.body
-    blog.timestamp = new Date()
-
-    blogModel.create(blog)
-    .then(blog => {
-        res.send(blog)
-    })
-    .catch(error => {
-        res.send(error)
-        console.log(error)
-    })
-})
+blogRouter.post('/createBlog', bookController.createBlog)
 
 // update blog by ID 
-blogRouter.put('/:id', async (req, res) => {
-    const blogID = req.params.id
-    const blog = req.body
-    blog.timestamp = new Date()
-
-    await blogModel.findByIdAndUpdate(blogID, blog, {new: true})
-    .then(newBlog => {
-        res.send(newBlog)
-    })
-    .catch(error => {
-        res.send(error)
-        console.log(error);
-    })
-})
+blogRouter.put('/updateByID/:id', bookController.updateBlogByID)
 
 // delete a blog by ID
-blogRouter.delete('/:id', async (req, res) => {
-    const blogID = req.params.id
-
-    await blogModel.findByIdAndDelete(blogID)
-    .then(() => {
-        res.send({
-            message: 'User deleted successfully'
-        })
-    })
-    .catch(error => {
-        res.send(error)
-        console.log(error);
-    })
-
-})
+blogRouter.delete('/deleteByID/:id', bookController.deleteBlog)
 
 // update blog state 
-blogRouter.put('/updateBlogState/:id', async (req, res) => {
-    const blogID = req.params.id
-    const newState = req.body.state
-
-    await blogModel.findByIdAndUpdate(blogID, { state: newState }, { new: true })
-    .then(newBlog => {
-        res.json(newBlog)
-    })
-    .catch(err => {
-        res.send(err)
-        console.log(err);
-    })
-})
+blogRouter.put('/updateBlogState/:id', book.Controller.updateBlogByID)
 
 // owner getting a list of their own blogs
-blogRouter.get('/ownersBlogs/:state', async (req, res) => {
-    const blogState = req.params.state
-    const page = req.params.page || 1
-    const limit = 20
+blogRouter.get('/ownersBlogs', bookController.getOwnersBlogs)
 
-    await blogModel.find({ state: blogState })
-    .skip((page - 1) * limit)
-    .limit(limit)
-    .then(blogs => {
-        res.send(blogs)
-    })
-    .catch(err => {
-        res.send(err)
-        console.log(err);
-    })
-})
 
 
 module.exports = blogRouter
