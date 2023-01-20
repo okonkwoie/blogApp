@@ -6,7 +6,7 @@ const userRouter = require('./routes/userRoutes')
 const blogRouter = require('./routes/blogRoutes')
 const helmet = require('helmet')
 const rateLimiter = require('./ratelimiting/rate_limiter')
-const logger = require('./logging/logger')
+const logger = require('./logger/logger')
 const auth0Middleware = require('./auth/auth0')
 const { requiresAuth } = require('express-openid-connect')
 

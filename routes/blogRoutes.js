@@ -1,31 +1,29 @@
 const express = require('express')
-const blogModel = require('../models/blog')
-const readingTime = require('../readtime/readingTime')
-const bookController = require('../controller/blog_controller')
+const blogController = require('../controller/blog_controller')
 
 const blogRouter = express.Router()
 
 
 // get all blogs
-blogRouter.get('/getAllBlogs', bookController.getAllBlogs)
+blogRouter.get('/getAllBlogs', blogController.getAllBlogs)
 
 // get a blog by ID
-blogRouter.get('/getBlogByID/:id', bookController.getBlogByID)
+blogRouter.get('/getBlogByID/:id', blogController.getBlogByID)
 
 // create a blog
-blogRouter.post('/createBlog', bookController.createBlog)
+blogRouter.post('/createBlog', blogController.createBlog)
 
 // update blog by ID 
-blogRouter.put('/updateByID/:id', bookController.updateBlogByID)
+blogRouter.put('/updateByID/:id', blogController.updateBlogByID)
 
 // delete a blog by ID
-blogRouter.delete('/deleteByID/:id', bookController.deleteBlog)
+blogRouter.delete('/deleteByID/:id', blogController.deleteBlog)
 
 // update blog state 
-blogRouter.put('/updateBlogState/:id', book.Controller.updateBlogByID)
+blogRouter.put('/updateBlogState/:id', blogController.updateBlogByID)
 
 // owner getting a list of their own blogs
-blogRouter.get('/ownersBlogs', bookController.getOwnersBlogs)
+blogRouter.get('/ownersBlogs', blogController.getOwnersBlogs)
 
 
 

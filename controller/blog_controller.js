@@ -1,4 +1,5 @@
 const blogModel = require('../models/blog')
+const readingTime = require('../readtime/readingTime')
 
 function getAllBlogs(req, res){
     let search = req.query.search
